@@ -1,68 +1,75 @@
-'use client';
+import { gql } from '@apollo/client';
+import client from '@/lib/apollo-client';
+import BookCard from '@/components/BookCard';
 
-import { motion } from 'framer-motion';
+const GET_LATEST_PRODUCTS = gql`
+  query GetLatestProducts {
+    products(first: 4, where: { orderby: { field: DATE, order: DESC } }) {
+      nodes {
+        id
+        databaseId
+        name
+        slug
+        image {
+          sourceUrl
+        }
+        ... on SimpleProduct {
+          price
+        }
+        ... on VariableProduct {
+          price
+        }
+      }
+    }
+  }
+`;
 
-const LatestArrivalsSkeleton = () => {
+interface ProductNode {
+    id: string;
+    databaseId: number;
+    name: string;
+    slug: string;
+    image: {
+        sourceUrl: string;
+    } | null;
+    price?: string;
+}
+
+interface LatestProductsData {
+    products: {
+        nodes: ProductNode[];
+    };
+}
+
+export default async function LatestArrivals() {
+    const { data } = await client.query<LatestProductsData>({
+        query: GET_LATEST_PRODUCTS,
+    });
+
+    const products = data?.products?.nodes || [];
+
     return (
         <section className="py-24 bg-zinc-950 px-6 overflow-hidden border-t border-zinc-900">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center mb-16">
                     <div className="space-y-4">
                         <h2 className="text-4xl font-serif text-white uppercase tracking-wider">Latest Arrivals</h2>
-                        <div className="h-px w-24 bg-zinc-500" />
-                    </div>
-                    <div className="text-zinc-500 text-xs tracking-widest uppercase animate-pulse font-sans">
-                        Connecting to WooCommerce...
+                        <div className="h-px w-24 bg-zinc-800" />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="space-y-6">
-                            {/* Product Card Skeleton */}
-                            <div className="relative aspect-[3/4.5] bg-zinc-900 overflow-hidden group border border-zinc-900/50">
-                                {/* Shimmer Effect */}
-                                <motion.div
-                                    initial={{ x: '-100%' }}
-                                    animate={{ x: '100%' }}
-                                    transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-                                    className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-800 to-transparent skew-x-12"
-                                />
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-zinc-800" />
-                            </div>
-
-                            <div className="space-y-3">
-                                <div className="h-4 bg-zinc-900 w-3/4 rounded-sm relative overflow-hidden">
-                                    <motion.div
-                                        initial={{ x: '-100%' }}
-                                        animate={{ x: '100%' }}
-                                        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.1 }}
-                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-800 to-transparent"
-                                    />
-                                </div>
-                                <div className="h-3 bg-zinc-900 w-1/2 rounded-sm relative overflow-hidden">
-                                    <motion.div
-                                        initial={{ x: '-100%' }}
-                                        animate={{ x: '100%' }}
-                                        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.2 }}
-                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-800 to-transparent"
-                                    />
-                                </div>
-                                <div className="h-4 bg-zinc-900 w-1/4 pt-2 rounded-sm relative overflow-hidden">
-                                    <motion.div
-                                        initial={{ x: '-100%' }}
-                                        animate={{ x: '100%' }}
-                                        transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.3 }}
-                                        className="absolute inset-0 bg-gradient-to-r from-transparent via-zinc-800 to-transparent"
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                    {products.map((product) => (
+                        <BookCard
+                            key={product.id}
+                            name={product.name}
+                            price={product.price || ''}
+                            image={product.image || undefined}
+                            slug={product.slug}
+                        />
                     ))}
                 </div>
             </div>
         </section>
     );
-};
-
-export default LatestArrivalsSkeleton;
+}

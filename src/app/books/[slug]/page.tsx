@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 import client from '@/lib/apollo-client';
-import Navbar from '@/components/Navbar';
+import ProductActions from '@/components/ProductActions';
 import Footer from '@/components/Footer';
 import Image from 'next/image';
 import sanitizeHtml from 'sanitize-html';
-import { cleanDescription as cleanHtml } from '@/lib/utils';
+import { cleanDescription as cleanHtml, formatPrice } from '@/lib/utils';
 import { notFound } from 'next/navigation';
 
 const GET_PRODUCT_BY_SLUG = gql`
@@ -22,10 +22,14 @@ const GET_PRODUCT_BY_SLUG = gql`
       ... on SimpleProduct {
         price
         regularPrice
+        stockStatus
+        stockQuantity
       }
       ... on VariableProduct {
         price
         regularPrice
+        stockStatus
+        stockQuantity
       }
     }
   }
@@ -46,6 +50,8 @@ interface ProductQueryResult {
             sourceUrl: string;
             altText: string;
         } | null;
+        stockStatus?: string;
+        stockQuantity?: number;
         price?: string;
         regularPrice?: string;
     } | null;
@@ -77,7 +83,6 @@ export default async function BookDetailPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-zinc-950 text-zinc-300 selection:bg-zinc-500/30">
-            <Navbar />
 
             <div className="pt-32 pb-24 px-6 md:px-12">
                 <div className="container mx-auto">
@@ -111,11 +116,17 @@ export default async function BookDetailPage({ params }: PageProps) {
 
                             <div className="flex items-center gap-6 pt-2">
                                 <p className="text-2xl md:text-3xl font-sans text-zinc-100 font-light tracking-wider">
-                                    {product.price || 'Contact for price'}
+                                    {formatPrice(product.price || null)}
                                 </p>
                             </div>
 
                             <div className="h-px w-full bg-zinc-900" />
+
+                            <ProductActions
+                                productId={product.databaseId}
+                                stockQuantity={product.stockQuantity}
+                                stockStatus={product.stockStatus}
+                            />
 
                             <div className="space-y-6">
                                 <h2 className="text-xs uppercase tracking-[0.4em] text-zinc-500 font-sans font-semibold">Synopsis</h2>
@@ -124,10 +135,6 @@ export default async function BookDetailPage({ params }: PageProps) {
                                     dangerouslySetInnerHTML={{ __html: finalDescription }}
                                 />
                             </div>
-
-                            <button className="px-8 py-5 bg-zinc-100 text-zinc-950 font-bold uppercase tracking-[0.2em] text-xs hover:bg-zinc-200 transition-all">
-                                Add to Library
-                            </button>
                         </div>
                     </div>
                 </div>

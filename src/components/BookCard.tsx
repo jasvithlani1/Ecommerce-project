@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
+import { formatPrice } from '@/lib/utils';
 
 interface BookCardProps {
     name: string;
@@ -50,7 +51,7 @@ const BookCard = ({ name, price, image, slug }: BookCardProps) => {
                         {name}
                     </h3>
                     <p className="text-zinc-400 font-sans font-medium tracking-widest text-sm italic">
-                        {price || "Price on Request"}
+                        {formatPrice(price)}
                     </p>
                 </div>
             </Link>
