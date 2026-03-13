@@ -52,18 +52,8 @@ export const useCartStore = create<CartState>()(
                     const rawApiTotal = data.totals?.total || data.totals?.subtotal || '0';
                     const parsedApiTotal = parsePrice(rawApiTotal);
 
-                    let finalSubtotal = itemsSum;
-
-                    // If API total is exactly 100x itemsSum (or very close), trust the itemsSum or divide API total
-                    // This handles cases where API returns 190500 and itemsSum is 1905
-                    if (parsedApiTotal > 0 && itemsSum > 0 && Math.abs(parsedApiTotal / 100 - itemsSum) < 0.1) {
-                        finalSubtotal = itemsSum;
-                    } else if (parsedApiTotal > 0 && itemsSum === 0) {
-                        // Fallback: if we have an API total but no items (unlikely here but safe), 
-                        // we still might need to guess if it's minor units. 
-                        // But usually, trust itemsSum if items exist.
-                        finalSubtotal = parsedApiTotal;
-                    }
+                    // Just trust itemsSum if it computed properly, else fallback to API total
+                    const finalSubtotal = itemsSum > 0 ? itemsSum : parsedApiTotal;
 
                     set({
                         cartItems: items as CartItem[],

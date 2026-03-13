@@ -70,8 +70,18 @@ export function parsePrice(price: string | number): number {
         return parseFloat(before + "." + partAfter);
     }
 
-    // If it's 3 digits or more, or empty, treat the separator as a thousands separator
-    return parseFloat(str.replace(/[^0-9-]/g, "")) || 0;
+    // If it's a pure integer (no decimal point or comma was found),
+    // we assume it is in minor units (like WooCommerce REST API passing 190500 for 1905.00 INR).
+    // Let's divide it by 100.
+    const parsed = parseFloat(str.replace(/[^0-9-]/g, "")) || 0;
+    
+    // If the original string didn't have any decimal separator, and it's substantial, 
+    // it's highly likely to be minor units coming from Cocart.
+    if (lastIdx === -1 && partAfter.length !== 2) {
+        return parsed / 100;
+    }
+
+    return parsed;
 }
 
 /**
