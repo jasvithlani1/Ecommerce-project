@@ -1,7 +1,5 @@
 import { gql } from '@apollo/client';
 import client from '@/lib/apollo-client';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import BookCard from '@/components/BookCard';
 
 const GET_PRODUCTS = gql`
@@ -52,7 +50,6 @@ export default async function BooksPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950">
-      <Navbar />
 
       <div className="pt-32 pb-24 px-6 md:px-12">
         <div className="container mx-auto">
@@ -66,17 +63,17 @@ export default async function BooksPage() {
             {products.map((product) => (
               <BookCard
                 key={product.id}
+                id={product.databaseId}
                 name={product.name}
                 price={product.price || ''}
                 image={product.image || undefined}
                 slug={product.slug}
               />
+
             ))}
           </div>
         </div>
       </div>
-
-      <Footer />
     </main>
   );
 }

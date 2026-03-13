@@ -3,6 +3,9 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import CartDrawer from "@/components/CartDrawer";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { Providers } from "@/components/Providers";
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -30,10 +33,14 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} antialiased bg-zinc-950 font-sans`}
         suppressHydrationWarning
       >
-        <Navbar />
-        {children}
-        <CartDrawer />
+        <Providers>
+          <Navbar />
+          {children}
+          <Footer />
+          <CartDrawer />
+        </Providers>
       </body>
+
     </html>
   );
 }

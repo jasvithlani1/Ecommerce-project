@@ -1,5 +1,3 @@
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import AuthorCard from '@/components/AuthorCard';
 
 const mockAuthors = [
@@ -29,7 +27,6 @@ const mockAuthors = [
 export default function AuthorsPage() {
     return (
         <main className="min-h-screen bg-zinc-950">
-            <Navbar />
 
             <div className="pt-32 pb-24 px-6">
                 <div className="container mx-auto">
@@ -52,8 +49,6 @@ export default function AuthorsPage() {
                     </div>
                 </div>
             </div>
-
-            <Footer />
         </main>
     );
 }

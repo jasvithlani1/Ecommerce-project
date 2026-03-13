@@ -1,7 +1,6 @@
 import { gql } from '@apollo/client';
 import client from '@/lib/apollo-client';
 import ProductActions from '@/components/ProductActions';
-import Footer from '@/components/Footer';
 import Image from 'next/image';
 import sanitizeHtml from 'sanitize-html';
 import { cleanDescription as cleanHtml, formatPrice } from '@/lib/utils';
@@ -124,9 +123,14 @@ export default async function BookDetailPage({ params }: PageProps) {
 
                             <ProductActions
                                 productId={product.databaseId}
+                                name={product.name}
+                                price={product.price || ''}
+                                image={product.image?.sourceUrl}
+                                slug={slug}
                                 stockQuantity={product.stockQuantity}
                                 stockStatus={product.stockStatus}
                             />
+
 
                             <div className="space-y-6">
                                 <h2 className="text-xs uppercase tracking-[0.4em] text-zinc-500 font-sans font-semibold">Synopsis</h2>
@@ -139,7 +143,6 @@ export default async function BookDetailPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
-            <Footer />
         </main>
     );
 }

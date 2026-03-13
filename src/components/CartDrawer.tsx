@@ -2,9 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import { X, Minus, Plus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import Image from 'next/image';
+import Link from 'next/link';
 import { formatINR, parsePrice } from '@/lib/utils';
 
 export default function CartDrawer() {
@@ -169,10 +170,14 @@ export default function CartDrawer() {
                                         </p>
                                     </div>
 
-                                    <button className="w-full group relative py-4 bg-white text-black font-sans font-bold uppercase tracking-[0.2em] text-xs overflow-hidden rounded-xl">
-                                        <span className="relative z-10">Proceed to Checkout</span>
-                                        <div className="absolute inset-0 bg-zinc-200 translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></div>
-                                    </button>
+                                    <Link
+                                        href="/checkout"
+                                        onClick={() => setCartOpen(false)}
+                                        className="w-full group relative py-4 bg-white text-black font-sans font-bold uppercase tracking-[0.2em] text-xs overflow-hidden rounded-xl flex items-center justify-center gap-2 hover:bg-zinc-200 transition-colors"
+                                    >
+                                        Proceed to Checkout
+                                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                                    </Link>
                                 </div>
                             );
                         })()}

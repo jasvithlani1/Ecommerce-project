@@ -15,10 +15,12 @@ interface CartState {
     // Actions
     setCartOpen: (open: boolean) => void;
     fetchCart: () => Promise<void>;
-    addItem: (productId: number) => Promise<void>;
+    addItem: (productId: number, quantity?: number) => Promise<void>;
     updateQuantity: (itemKey: string, quantity: number) => Promise<void>;
     removeItem: (itemKey: string) => Promise<void>;
+    clearCart: () => Promise<void>;
 }
+
 
 export const useCartStore = create<CartState>()(
     persist(
@@ -153,6 +155,31 @@ export const useCartStore = create<CartState>()(
                 } catch (error) {
                     console.error('Failed to remove item:', error);
                     set({ cartItems: previousItems, subtotal: previousSubtotal });
+                }
+            },
+
+            clearCart: async () => {
+                set({ isLoading: true });
+                try {
+                    // Assuming we might have an API endpoint to clear cart in cocart,
+                    // but since the objective says "clear the Zustand cart", 
+                    // we might just clear local state and cartKey.
+                    if (get().cartKey) {
+                        try {
+                            await cocart.clearCart(get().cartKey!);
+                        } catch (e) {
+                            // Ignore clearCart API errors if endpoint doesn't exist
+                        }
+                    }
+                    set({
+                        cartItems: [],
+                        subtotal: '0',
+                        cartKey: null,
+                    });
+                } catch (error) {
+                    console.error('Failed to clear cart:', error);
+                } finally {
+                    set({ isLoading: false });
                 }
             }
         }),

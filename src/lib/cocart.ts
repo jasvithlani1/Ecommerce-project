@@ -30,25 +30,31 @@ export interface CartTotals {
 }
 
 export const cocart = {
-    async getCart(cartKey?: string) {
+    async getCart(cartKey?: string, token?: string) {
         const url = new URL(`${COCART_URL}/cart`);
         if (cartKey) url.searchParams.append('cart_key', cartKey);
 
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         const res = await fetch(url.toString(), {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             cache: 'no-store'
         });
         return res.json();
     },
 
-    async addToCart(productId: string | number, quantity: number = 1, cartKey?: string) {
+    async addToCart(productId: string | number, quantity: number = 1, cartKey?: string, token?: string) {
         const url = new URL(`${COCART_URL}/cart/add-item`);
         if (cartKey) url.searchParams.append('cart_key', cartKey);
 
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         const res = await fetch(url.toString(), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify({
                 id: productId.toString(),
                 quantity: quantity.toString()
@@ -57,26 +63,47 @@ export const cocart = {
         return res.json();
     },
 
-    async updateItem(itemKey: string, quantity: number, cartKey?: string) {
+    async updateItem(itemKey: string, quantity: number, cartKey?: string, token?: string) {
         const url = new URL(`${COCART_URL}/cart/item/${itemKey}`);
         if (cartKey) url.searchParams.append('cart_key', cartKey);
 
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         const res = await fetch(url.toString(), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers,
             body: JSON.stringify({ quantity: quantity.toString() })
         });
         return res.json();
     },
 
-    async removeItem(itemKey: string, cartKey?: string) {
+    async removeItem(itemKey: string, cartKey?: string, token?: string) {
         const url = new URL(`${COCART_URL}/cart/item/${itemKey}`);
         if (cartKey) url.searchParams.append('cart_key', cartKey);
 
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
         const res = await fetch(url.toString(), {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
+            headers
+        });
+        return res.json();
+    },
+
+    async clearCart(cartKey?: string, token?: string) {
+        const url = new URL(`${COCART_URL}/cart/clear`);
+        if (cartKey) url.searchParams.append('cart_key', cartKey);
+
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        const res = await fetch(url.toString(), {
+            method: 'POST',
+            headers
         });
         return res.json();
     }
 };
+

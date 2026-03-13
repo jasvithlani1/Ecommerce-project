@@ -13,4 +13,4 @@ const nextConfig = {
   // Keep any other existing settings like experimental or swcMinify here
 };
 
-module.exports = nextConfig;
+export default nextConfig;
